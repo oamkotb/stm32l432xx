@@ -2,8 +2,9 @@
 
 #include "stm32l432xx.h"
 
-#define IN  0b00
-#define OUT 0b01
+#define GPIO_IN  0b00 // Input
+#define GPIO_OUT 0b01 // Output
+#define GPIO_ALT 0b10 // Alternative Function
 
 #define LOW  0x00
 #define HIGH 0xFF
@@ -79,10 +80,10 @@ void pinToggle(uint8_t port_pin);
 
 void setInputPin(uint8_t port_pin);
 void setInputPin_pupd(uint8_t port_pin, uint8_t pupd);
-
-void setPin(uint8_t port_pin, uint8_t state);
-
 uint8_t pinRead(uint8_t port_pin);
+
+void setAltPin(uint8_t port_pin);
+void setPin(uint8_t port_pin, uint8_t state);
 
 void irqStartPin(uint8_t port_pin);
 void irqEnablePinEdge(uint8_t port_pin, uint8_t edge); // Enable either rising or falling trigger

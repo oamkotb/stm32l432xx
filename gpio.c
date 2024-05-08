@@ -87,7 +87,7 @@ void setOutputPin(uint8_t port_pin)
   initGPIOPort(port);
 
   GPIO->MODER &= ~(0b11 << (pin * 2)); // Reset pin mode
-  GPIO->MODER |= (OUT << (pin * 2)); // Set pin mode to output
+  GPIO->MODER |= (GPIO_OUT << (pin * 2)); // Set pin mode to output
 
   GPIO->OTYPER &= ~(0b1 << pin); // Set pin as push-pull output
 
@@ -104,7 +104,7 @@ void setOutputPin_ospeed(uint8_t port_pin, uint8_t ospeed)
   initGPIOPort(port);
 
   GPIO->MODER &= ~(0b11 << (pin * 2)); // Reset pin mode
-  GPIO->MODER |= (OUT << (pin * 2)); // Set pin mode to output
+  GPIO->MODER |= (GPIO_OUT << (pin * 2)); // Set pin mode to output
 
   GPIO->OTYPER &= ~(0b1 << pin); // Set pin as push-pull output
 
@@ -139,7 +139,7 @@ void setInputPin(uint8_t port_pin)
   initGPIOPort(port);
 
   GPIO->MODER &= ~(0b11 << (pin * 2)); // Reset pin mode
-  GPIO->MODER |= (IN << (pin * 2)); // Set pin mode to input
+  GPIO->MODER |= (GPIO_IN << (pin * 2)); // Set pin mode to input
 
   GPIO->PUPDR &= ~(0b11 << (pin * 2)); // Reset pin pull-up/pull-down mode
   GPIO->PUPDR |= (PUPD_PD << (pin * 2)); // Set pin to pull-down
@@ -154,7 +154,7 @@ void setInputPin_pupd(uint8_t port_pin, uint8_t pupd)
   initGPIOPort(port);
 
   GPIO->MODER &= ~(0b11 << (pin * 2)); // Reset pin mode
-  GPIO->MODER |= (IN << (pin * 2)); // Set pin mode to input
+  GPIO->MODER |= (GPIO_IN << (pin * 2)); // Set pin mode to input
 
   GPIO->PUPDR &= ~(0b11 << (pin * 2)); // Reset pin pull-up/pull-down mode
   GPIO->PUPDR |= (pupd << (pin * 2)); // Set pin to pull-down
@@ -172,13 +172,27 @@ uint8_t pinRead(uint8_t port_pin)
     return LOW; // Pin is LOW
 }
 
-/******************************* General I/O Pins *******************************/
+/******************************* Other Pins *******************************/
+void setAltPin(uint8_t port_pin)
+{
+  uint8_t port = port_pin / 16;
+  uint8_t pin = port_pin % 16;
+  GPIO_TypeDef* GPIO = getGPIO(port);
+
+  initGPIOPort(port);
+
+  GPIO->MODER &= ~(0b11 << (pin * 2)); // Reset pin mode
+  GPIO->MODER |= (GPIO_ALT << (pin * 2)); // Set pin mode to input
+}
+
 void setPin(uint8_t port_pin, uint8_t state)
 {
-  if (state == IN)
+  if (state == GPIO_IN)
     setInputPin(port_pin);
-  else
+  else if (state == GPIO_OUT)
     setInputPin(port_pin);
+  else if (state == GPIO_ALT)
+    setAltPin(port_pin);
 }
 
 /******************************* Interrupt Pins *******************************/
